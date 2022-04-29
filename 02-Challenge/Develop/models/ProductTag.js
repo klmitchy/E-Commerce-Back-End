@@ -17,7 +17,7 @@ ProductTag.init(
       allowNull: false,
       references: {
           model: 'Product',
-          key: 'id',
+          key: 'id',}
     },
   
   
@@ -27,6 +27,6 @@ ProductTag.init(
     underscored: true,
     modelName: 'product_tag',
   }
-;
+);
 
 module.exports = ProductTag;
