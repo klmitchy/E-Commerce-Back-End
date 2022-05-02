@@ -18,32 +18,65 @@ router.get('/', (req, res) => {
 }
 });
 
-router.get('/:id', (req, res) => {
-  try{
-    const onecategory = Product.findByPk({
-      //req, res research, how to grab url params and then store in variable
-    });
-if (project === null) {
-  console.log('Not found!');
-} else {
-  console.log(project instanceof Project); // true
-  // Its primary key is 123
-}
+
+router.get('/:id', async (req, res) => {
+  try {
+    const oneCategory = await User.findByPk(req.params.id);
+    if (!oneCategory) {
+      res.status(404).json({ message: 'No book with this id!' });
+      return;
+    }
+    res.status(200).json(oneCategory);
+  } catch (err) {
+    res.status(500).json(err);
   }
-  // find one category by its `id` value
-  // be sure to include its associated Products
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
+  try {
+    const userData = await User.create(req.body);
+    res.status(200).json(userData);
+  } catch (err) {
+    // 400 status code means the server could not understand the request
+    res.status(400).json(err);
+  }
+});
   // create a new category
-});
-
-router.put('/:id', (req, res) => {
-  // update a category by its `id` value
-});
+  router.put('/:id', (req, res) => {
+    // Calls the update method on the category id
+    Category.update(
+      {
+        // All the fields you can update and the data attached to the request body.
+        id: req.body.id,
+        category_name: req.body.ccategory_name,
+      },
+      {
+        // Gets the books based on the isbn given in the request parameters
+        where: {
+          id: req.params.id,
+        },
+      }
+    )
+      .then((updatedCategory) => {
+        // Sends the updated book as a json response
+        res.json(updatedCategory);
+      })
+      .catch((err) => res.json(err));
+  });
 
 router.delete('/:id', (req, res) => {
-  // delete a category by its `id` value
-});
+    // Looks for the books based on isbn given in the request parameters and deletes the instance from the database
+    Category.destroy({
+      where: {
+        id: req.params.isbn,
+      },
+    })
+      .then((deletedCategory) => {
+        res.json(deletedCategory);
+      })
+      .catch((err) => res.json(err));
+  });
+
+
 
 module.exports = router;
