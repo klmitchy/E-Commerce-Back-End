@@ -6,30 +6,37 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // get all products
 router.get('/', (req, res) => {
   try{
-    const allproduct = Category.findAll({
+    const allProduct = Product.findAll({
       include: [{Model: Product}],
     })
-    res.status(200).json(allcategorydata);
+    res.status(200).json(allProduct);
   }
-  // find all categories
-  // be sure to include its associated Products
- 
   catch (err) {
   res.status(500).json(err);
 }
 });
   // find all products
   // be sure to include its associated Category and Tag data
-});
 
 // get one product
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
+  try {
+    const oneProduct = await User.findByPk(req.params.id);
+    if (!oneProduct) {
+      res.status(404).json({ message: 'No product with this id!' });
+      return;
+    }
+    res.status(200).json(oneProduct);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
+
 // create new product
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -38,6 +45,15 @@ router.post('/', (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
+    try {
+      const userData = await User.create(req.body);
+      res.status(200).json(userData);
+    } catch (err) {
+      // 400 status code means the server could not understand the request
+      res.status(400).json(err);
+    }
+  });
+
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -58,7 +74,6 @@ router.post('/', (req, res) => {
       console.log(err);
       res.status(400).json(err);
     });
-});
 
 // update product
 router.put('/:id', (req, res) => {

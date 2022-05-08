@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
       {
         // All the fields you can update and the data attached to the request body.
         id: req.body.id,
-        category_name: req.body.ccategory_name,
+        category_name: req.body.category_name,
       },
       {
         // Gets the books based on the isbn given in the request parameters
